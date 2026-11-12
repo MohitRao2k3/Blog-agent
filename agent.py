@@ -393,21 +393,30 @@ def worker_node(payload: dict) -> dict:
                 )
             ),
     ]):
-        # 🟢 CHANGE 2: Print each chunk immediately
-        if isinstance(chunk.content, str):
-            print(chunk.content, end="", flush=True)
-            response_chunks.append(chunk.content)
+        content = chunk.content
+        if isinstance(content, str):
+            text = content
 
-    # 🟢 CHANGE 3: Combine all chunks into one response
-    content = "".join(response_chunks)
-    
-    if isinstance(content, list):
-        content = "\n".join(
-            part.get("text", "") if isinstance(part, dict) else str(part)
-            for part in content
-        )
+        elif isinstance(content, list):
+            text = "".join(
+                part if isinstance(part, str)
+                else part.get("text", "") if isinstance(part, dict)
+                else ""
+                for part in content
+            )
 
-    section_markdown = str(content).strip()
+        else:
+            text = ""
+
+        if text:
+            print(text, end="", flush=True)
+            response_chunks.append(text)
+
+    section_markdown = "".join(response_chunks).strip()
+
+    if not section_markdown:
+        raise ValueError(f"Worker generated empty content for section: {task.title}")
+
     return {"sections": [(task.id, section_markdown)]}
 
 

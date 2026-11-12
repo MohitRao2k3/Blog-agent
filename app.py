@@ -183,7 +183,7 @@ with st.sidebar:
     with st.form("generate_blog_form", clear_on_submit=False):
         topic = st.text_area(
             "Topic",
-            value="Self Attention",
+            value="self attention",
             height=100,
             placeholder="e.g. Building a RAG chatbot with LangGraph",
         )
@@ -455,3 +455,4 @@ with preview_tab:
             st.code(markdown, language="markdown")
     else:
         st.warning("No Markdown content is available for this result.")
+        
